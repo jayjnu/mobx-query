@@ -40,6 +40,7 @@ importers:
   apps/web:
     specifiers:
       '@babel/core': ^7.17.9
+      '@jayjnu/mobx-query': workspace:*
       '@types/node': ^17.0.12
       '@types/react': 17.0.37
       config: workspace:*
@@ -54,6 +55,7 @@ importers:
       typescript: ^4.5.3
       ui: workspace:*
     dependencies:
+      '@jayjnu/mobx-query': link:../../packages/mobx-query
       mobx: 6.5.0
       mobx-react-lite: 3.3.0_3b110ddd052df537d55bc762cdd4d0b8
       next: 12.0.8_f370f735164a03a12cea0cc89593cbee
