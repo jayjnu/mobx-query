@@ -1,8 +1,8 @@
 import {reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved, IReactionDisposer} from "mobx";
 import CacheController from "./CacheController";
+import QueryStatus from "./QueryStatus";
 import QueryKey from "./QueryKey";
 import QueryKeysMapper from "./QueryKeysMapper";
-import QueryStatus from "./QueryStatus";
 import QueryStatusController from "./QueryStatusController";
 
 interface QueryContext<T> {
@@ -18,18 +18,32 @@ export interface QueryDescriptor<Data, QueryKeyValue> {
   initialData: Data;
 }
 
-export default class Query<Data, Params> extends QueryStatus {
+export default class Query<Data, Params> {
   data: Data = this.queryDescriptor.initialData;
-  private statusController = new QueryStatusController(this);
-
+  private status = new QueryStatus()
+  private statusController = new QueryStatusController(this.status);
   private fetchReactionDisposer: IReactionDisposer | null = null;
   private queryKeysMapper = QueryKeysMapper.of(this.queryDescriptor.queryKey);
+
+  get isLoading() {
+    return this.status.isLoading;
+  }
+
+  get isError() {
+    return this.status.isError;
+  }
+  get isSuccess() {
+    return this.status.isSuccess;
+  }
+
+  get isUninitialized() {
+    return this.status.isUninitialized;
+  }
 
   constructor(
     private cacheController: CacheController,
     private queryDescriptor: QueryDescriptor<Data, Params>
   ) {
-    super();
     makeAutoObservable(this);
     onBecomeObserved(this, 'data', this.init);
     onBecomeUnobserved(this, 'data', this.destroy);
@@ -42,14 +56,22 @@ export default class Query<Data, Params> extends QueryStatus {
         values: this.queryKeysMapper.toValues()
       };
     }, ({cacheKey, values}) => {
-      this.cacheController.hitOrMiss(cacheKey, () => {
+      this.cacheController.hitOrMiss<Data>(cacheKey, () => {
         return this.statusController.run(() => {
           return this.queryDescriptor.fetch({queryKey: values});
         });
+      }).then((hit) => {
+        if (hit?.data) {
+          this.setData(hit.data);
+        }
       });
     }, {
       fireImmediately: true
     })
+  }
+
+  private setData(data: Data) {
+    this.data = data;
   }
 
   private destroy = () => {

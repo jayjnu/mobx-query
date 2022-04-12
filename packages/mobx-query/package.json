@@ -2,13 +2,11 @@
   "name": "@jayjnu/mobx-query",
   "version": "0.0.0",
   "description": "observable api representation toolkit",
-  "main": "main.ts",
+  "main": "./main.ts",
+  "types": "./main.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/jayjnu/mobx-query.git"
-  },
-  "scripts": {
-    "test": "jest"
   },
   "keywords": [
     "mobx",
