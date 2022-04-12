@@ -1,0 +1,26 @@
+{
+  "name": "@jayjnu/mobx-query",
+  "version": "0.0.0",
+  "description": "observable api representation toolkit",
+  "main": "main.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jayjnu/mobx-query.git"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "mobx",
+    "http",
+    "api",
+    "fetch",
+    "cache"
+  ],
+  "author": {
+    "name": "jayjnu",
+    "url": "https://github.com/jayjnu",
+    "email": "doublejnu@gmail.com"
+  },
+  "license": "ISC"
+}
