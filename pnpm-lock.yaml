@@ -74,6 +74,12 @@ importers:
       eslint-config-prettier: 8.5.0
       eslint-plugin-react: 7.28.0
 
+  packages/mobx-query:
+    specifiers:
+      mobx: ^6.5.0
+    dependencies:
+      mobx: 6.5.0
+
   packages/tsconfig:
     specifiers: {}
 
@@ -1516,6 +1522,10 @@ packages:
 
   /minimist/1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
+    dev: false
+
+  /mobx/6.5.0:
+    resolution: {integrity: sha512-pHZ/cySF00FVENDWIDzJyoObFahK6Eg4d0papqm6d7yMkxWTZ/S/csqJX1A3PsYy4t5k3z2QnlwuCfMW5lSEwA==}
     dev: false
 
   /ms/2.0.0:

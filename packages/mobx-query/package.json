@@ -22,5 +22,8 @@
     "url": "https://github.com/jayjnu",
     "email": "doublejnu@gmail.com"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mobx": "^6.5.0"
+  }
 }
