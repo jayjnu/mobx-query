@@ -23,7 +23,13 @@
     "email": "doublejnu@gmail.com"
   },
   "license": "ISC",
-  "dependencies": {
+  "peerDependencies": {
+    "mobx": "^6.5.0"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "config": "workspace:*",
+    "typescript": "^4.5.3",
     "mobx": "^6.5.0"
   }
 }

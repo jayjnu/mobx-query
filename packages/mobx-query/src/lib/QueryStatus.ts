@@ -35,19 +35,19 @@ export default class QueryStatus {
     this.status = status;
   }
 
-  protected idle() {
+  idle() {
     this.setStatus(status.idle);
   }
 
-  protected success() {
+  success() {
     this.setStatus(status.success);
   }
 
-  protected load() {
+  load() {
     this.setStatus(status.loading);
   }
 
-  protected error() {
+  error() {
     this.setStatus(status.error);
   }
 }
