@@ -8,7 +8,7 @@ export default class CacheController {
       return this.cache.get<T>(cacheKey);
     } else {
       const res = await onMiss();
-
+      
       this.cache.set(cacheKey, res);
 
       return this.cache.get<T>(cacheKey);
