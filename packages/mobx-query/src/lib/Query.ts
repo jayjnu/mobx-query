@@ -56,15 +56,7 @@ export default class Query<Data, Params> {
         values: this.queryKeysMapper.toValues()
       };
     }, ({cacheKey, values}) => {
-      this.cacheController.hitOrMiss<Data>(cacheKey, () => {
-        return this.statusController.run(() => {
-          return this.queryDescriptor.fetch({queryKey: values});
-        });
-      }).then((hit) => {
-        if (hit?.data) {
-          this.setData(hit.data);
-        }
-      });
+      this.request(cacheKey, values);
     }, {
       fireImmediately: true
     })
@@ -77,5 +69,25 @@ export default class Query<Data, Params> {
   private destroy = () => {
     this.fetchReactionDisposer?.();
     this.fetchReactionDisposer = null;
+  }
+
+  private request(cacheKey: string, values: Params[]) {
+    this.cacheController.hitOrMiss<Data>(cacheKey, () => {
+      return this.statusController.run(() => {
+        return this.queryDescriptor.fetch({queryKey: values});
+      });
+    }).then((hit) => {
+      if (hit?.data) {
+        this.setData(hit.data);
+      }
+    });
+  }
+
+  invalidate() {
+    const cacheKey = this.queryKeysMapper.toCacheKey();
+    const values = this.queryKeysMapper.toValues();
+
+    this.cacheController.clearCache(cacheKey);
+    this.request(cacheKey, values);
   }
 }
