@@ -4,6 +4,7 @@ import QueryStatus from "./QueryStatus";
 import QueryKey from "./QueryKey";
 import QueryKeysMapper from "./QueryKeysMapper";
 import QueryStatusController from "./QueryStatusController";
+import Hit from "./Hit";
 
 interface QueryContext<T> {
   signal?: any;
@@ -20,6 +21,7 @@ export interface QueryDescriptor<Data, QueryKeyValue> {
 
 export default class Query<Data, Params> {
   data: Data = this.queryDescriptor.initialData;
+  error: null | Error | unknown = null;
   private status = new QueryStatus()
   private statusController = new QueryStatusController(this.status);
   private fetchReactionDisposer: IReactionDisposer | null = null;
@@ -49,12 +51,16 @@ export default class Query<Data, Params> {
     onBecomeUnobserved(this, 'data', this.destroy);
   }
 
+  private get cacheKeyPairs() {
+    return {
+      cacheKey: this.queryKeysMapper.toCacheKey(),
+      values: this.queryKeysMapper.toValues()
+    };
+  }
+
   private init = () => {
     this.fetchReactionDisposer = reaction(() => {
-      return {
-        cacheKey: this.queryKeysMapper.toCacheKey(),
-        values: this.queryKeysMapper.toValues()
-      };
+      return this.cacheKeyPairs;
     }, ({cacheKey, values}) => {
       this.request(cacheKey, values);
     }, {
@@ -71,23 +77,26 @@ export default class Query<Data, Params> {
     this.fetchReactionDisposer = null;
   }
 
-  private request(cacheKey: string, values: Params[]) {
-    this.cacheController.hitOrMiss<Data>(cacheKey, () => {
-      return this.statusController.run(() => {
-        return this.queryDescriptor.fetch({queryKey: values});
-      });
-    }).then((hit) => {
-      if (hit?.data) {
-        this.setData(hit.data);
-      }
-    });
+  private async request(cacheKey: string, values: Params[]) {
+    const hit = await this.cacheController.hitOrMiss<Data>(cacheKey, () => this.fetch(values));
+
+    this.onCachedResultSuccess(hit);
   }
 
-  invalidate() {
-    const cacheKey = this.queryKeysMapper.toCacheKey();
-    const values = this.queryKeysMapper.toValues();
+  private onCachedResultSuccess(hit?: Hit<Data>) {
+    if (hit?.data) {
+      this.setData(hit.data);
+    }
+  }
 
-    this.cacheController.clearCache(cacheKey);
-    this.request(cacheKey, values);
+  private fetch(params: Params[]) {
+    return this.statusController.run(() => this.queryDescriptor.fetch({queryKey: params}));
+  }
+
+  async refetch() {
+    const {cacheKey, values} = this.cacheKeyPairs;
+    const hits = await this.cacheController.refetch(cacheKey, () => this.fetch(values));
+
+    this.onCachedResultSuccess(hits);
   }
 }

@@ -10,7 +10,7 @@ const status = {
 type QueryStatuses = (typeof status)[keyof typeof status]
 
 export default class QueryStatus {
-  private status: QueryStatuses = status.idle
+  private status: QueryStatuses = status.idle;
 
   get isLoading() {
     return this.status === status.loading;

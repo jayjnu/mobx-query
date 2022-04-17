@@ -1,8 +1,13 @@
-import {makeAutoObservable, observable} from "mobx";
+import {makeAutoObservable, observable, entries} from "mobx";
 import Hit from "./Hit";
 
+type CacheKey = string;
+
+type PurgeStats = {
+  ids: CacheKey[];
+}
 export default class Cache {
-  private data = observable.map<string, Hit>();
+  private data = observable.map<CacheKey, Hit>();
 
   constructor() {
     makeAutoObservable(this);
@@ -22,5 +27,19 @@ export default class Cache {
 
   purge(key: string) {
     this.data.delete(key);
+  }
+
+  purgeMany(predicate: (arg: [CacheKey, Hit]) => boolean): PurgeStats {
+    const stats: PurgeStats = {
+      ids: []
+    };
+    entries(this.data).forEach(([key, value]) => {
+      if (predicate([key, value])) {
+        console.log('purge', key);
+        stats.ids.push(key);
+        this.purge(key);
+      }
+    })
+    return stats;
   }
 }
