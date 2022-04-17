@@ -20,7 +20,7 @@ export default abstract class Entity<Props extends Record<string, any>> {
         return validation === true ? stats : stats.concat(validation);
       }, [] as Error[]);
 
-      return Array.isArray(validations) ? validations : true;
+      return validations.length > 0 ? validations : true;
   }
 
   abstract validateEach<T>(key: keyof Props, value: T): true | Error;

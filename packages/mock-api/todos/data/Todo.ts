@@ -23,7 +23,7 @@ export default class TodoEntity extends Entity<TodoEntityProps> {
     }
     const {validate, error} = validation;
 
-    return validate(key) || new Error(error);
+    return validate(value) || new Error(error);
   }
 
   serialize(): TodoEntityProps {

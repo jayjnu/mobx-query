@@ -13,8 +13,8 @@ export const createHandlers = ({
   baseUrl
 }: TodoHandlersInit) => ([
   // Handles a POST /login request
-  rest.post<TodoEntityProps>(`${baseUrl}/todo`, (req, res, ctx) => {
-    const props = req.body;
+  rest.post<string>(`${baseUrl}/todo`, (req, res, ctx) => {
+    const props = JSON.parse(req.body) as TodoEntityProps;
 
     if (!props) {
       return res(
@@ -26,16 +26,22 @@ export const createHandlers = ({
     const validation = entity.validate();
 
     if (validation === true) {
-      db.addOne(entity.serialize());
+      const result = db.addOne(entity.serialize());
 
-      return res(
-        ctx.status(201),
-      );
+      if (result) {
+        return res(ctx.status(400), ctx.json({
+          messages: result.message
+        }));
+      } else {
+        return res(
+          ctx.status(201),
+        );
+      }
     } else {
       return res(
         ctx.status(400),
         ctx.json({
-          messages: validation
+          messages: validation.map((error) => error.message)
         })
       )
     }
@@ -43,6 +49,8 @@ export const createHandlers = ({
   }),
   // Handles a GET /user request
   rest.get(`${baseUrl}/todos`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({data: db.findMany(() => true)}));
+    const data = db.findMany(() => true);
+
+    return res(ctx.status(200), ctx.json({data}));
   }),
 ])
