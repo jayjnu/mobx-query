@@ -1,0 +1,21 @@
+{
+  "name": "mock-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "mock api server implementation",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "config": "workspace:*",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.5.3"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^6.1.2",
+    "msw": "^0.39.2"
+  }
+}

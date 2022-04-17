@@ -5,7 +5,13 @@ import TodoService from "../services/TodoService";
 export default class TodoStore {
   page = 1;
   private todosQueryKey = queryKey('todos', () => this.page);
-  todos = this.service.getTodos(this.todosQueryKey);
+
+  private todosQuery = this.service.getTodos(this.todosQueryKey);
+
+  get todos() {
+    return this.todosQuery.data;
+  }
+
 
   constructor(private service: TodoService) {
     makeAutoObservable(this);
