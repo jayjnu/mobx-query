@@ -4,6 +4,7 @@ import Cache from './Cache';
 interface CacheControllerEvents {
   onInvalidate: (key: string) => void;
 }
+
 export default class CacheController {
   constructor(private cache: Cache, private events: CacheControllerEvents) {
     makeAutoObservable(this);
