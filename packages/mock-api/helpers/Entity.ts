@@ -15,6 +15,7 @@ export default abstract class Entity<Props extends Record<string, any>> {
 
   validate(): true | Error[] {
     const validations = Object.entries(this.props)
+      .filter(([key]) => key !== 'id')
       .map(([key, value]) => this.validateEach(key, value))
       .reduce((stats, validation) => {
         return validation === true ? stats : stats.concat(validation);

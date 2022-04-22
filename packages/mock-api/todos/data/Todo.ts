@@ -3,6 +3,7 @@ import Entity from "../../helpers/Entity";
 export type TodoEntityProps = {
   id: string;
   title: string;
+  status: string;
 };
 
 export default class TodoEntity extends Entity<TodoEntityProps> {
@@ -13,6 +14,13 @@ export default class TodoEntity extends Entity<TodoEntityProps> {
         validate: (value: unknown) => typeof value === 'string' && value.length > 5,
         error: 'title should have at least five length'
       },
+    ],
+    [
+      'status',
+      {
+        validate: (value: unknown) => ['todo', 'progress', 'done'].includes(value as string),
+        error: `status should be one of 'todo', 'progress', 'done'`
+      }
     ]
   ]);
 
@@ -29,7 +37,8 @@ export default class TodoEntity extends Entity<TodoEntityProps> {
   serialize(): TodoEntityProps {
     return {
       id: this._id,
-      title: this.props.title
+      title: this.props.title,
+      status: this.props.status
     };
   }
 }

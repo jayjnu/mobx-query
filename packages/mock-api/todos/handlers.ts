@@ -53,4 +53,47 @@ export const createHandlers = ({
 
     return res(ctx.status(200), ctx.json({data}));
   }),
+
+  rest.put(`${baseUrl}/todos/:id`, (req, res, ctx) => {
+    const id = req.params.id as string;
+    const data = db.findOne(id);
+
+    if (!data) {
+      return res(ctx.status(404));
+    }
+
+    const {changes} = JSON.parse(req.body as string) as {id: string; changes: Partial<Omit<TodoEntityProps, 'id'>>};
+
+    const entity = new TodoEntity({
+      ...data,
+      ...changes
+    });
+
+    const validation = entity.validate();
+
+    if (validation !== true) {
+      return res(ctx.status(400), ctx.json({
+        messages: validation.map((err) => err.message)
+      }));
+    }
+    
+
+    const error = db.updateOne({
+      id,
+      changes: entity.serialize()
+    });
+
+    if (error) {
+      return res(ctx.status(400));
+    }
+
+    return res(ctx.status(200));
+  }),
+  rest.delete(`${baseUrl}/todos/:id`, (req, res, ctx) => {
+    const id = req.params.id as string;
+
+    db.removeOne(id);
+
+    return res(ctx.status(200), ctx.json({status: 200}))
+  })
 ])

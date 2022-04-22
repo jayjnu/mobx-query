@@ -11,6 +11,7 @@ function createItem(): [string, TodoEntityProps] {
   
   return [id, {
     id,
+    status: 'todo',
     title: faker.commerce.product()
   }]
 }
