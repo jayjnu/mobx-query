@@ -1,4 +1,4 @@
-import {FC, PropsWithChildren} from "react";
+import {FC} from "react";
 import {createContext, useContext} from "react";
 import TodoStore from "../../domain/stores/TodoStore";
 import {defineSafeContextHook} from "../../utils/hooks/defineSafeContextHook";
@@ -18,7 +18,9 @@ export const TodoProvider: FC<TodoProviderProps> = ({
   store,
   children
 }) => {
-  return <TodoContext.Provider value={store}>
-    {children}
-  </TodoContext.Provider>
+  return (
+    <TodoContext.Provider value={store}>
+      {children}
+    </TodoContext.Provider>
+  );
 }

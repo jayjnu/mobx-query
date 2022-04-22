@@ -1,12 +1,20 @@
 import {QueryKey, QueryClient} from '@jayjnu/mobx-query';
 
+export type TodoId = string;
+export type TodoStatus = 'todo' | 'progress' | 'done';
 export type Todo = {
+  status: TodoStatus;
   title: string;
-  id: number;
+  id: TodoId;
 }
 
 export type AddTodoForm = {
   title: string;
+}
+
+export type UpdateTodoForm = {
+  id: TodoId;
+  changes: Partial<Omit<Todo, TodoId>>;
 }
 export default class TodoService {
   constructor(private queryClient: QueryClient) {}
@@ -45,5 +53,30 @@ export default class TodoService {
       },
       invalidateTags: ['todos']
     });
+  }
+
+  removeTodo() {
+    return this.queryClient.createMutation<string, void>({
+      fetch: async (data) => {
+        const res = await fetch(`/api/todos/${data}`, {
+          method: 'delete',
+        });
+
+        return await res.json();
+      },
+      invalidateTags: ['todos']
+    });
+  }
+
+  updateTodo() {
+    return this.queryClient.createMutation<UpdateTodoForm, void>({
+      fetch: async ({id, changes}) => {
+        await fetch(`/api/todos/${id}`, {
+          method: 'put',
+          body: JSON.stringify({changes})
+        });
+      },
+      invalidateTags: ['todos']
+    })
   }
 }
